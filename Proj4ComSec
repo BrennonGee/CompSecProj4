@@ -1,0 +1,65 @@
+package proj4comsec;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+/**
+ *
+ * @author malachiamarshall
+ */
+public class Proj4ComSec {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws FileNotFoundException, NoSuchAlgorithmException, IOException {
+        File f = new File("C:\\Users\\malachiamarshall\\Documents\\NetBeansProjects\\Proj4ComSec\\src\\Proj4comsec\\Bible.txt");//parse file
+        Scanner sc = new Scanner(f);
+        
+        String str = "";
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        
+        File file = new File("C:\\Users\\malachiamarshall\\Documents\\NetBeansProjects\\Proj4ComSec\\src\\Proj4comsec\\hashed.txt");
+        FileOutputStream out = new FileOutputStream(file);
+ 
+        //add salt later
+        while(sc.hasNext()){
+            str = sc.next();
+            md.update(str.getBytes(), 0, str.length());
+            out.write((new BigInteger(1, md.digest()).toString(16)+"\n").getBytes());
+        }
+        compare();
+    }
+    
+    public static void compare() throws FileNotFoundException{
+        File hashes = new File("C:\\Users\\malachiamarshall\\Documents\\NetBeansProjects\\Proj4ComSec\\src\\Proj4comsec\\hashed.txt");
+        File passwords = new File("passwords.in");
+        Scanner hash = new Scanner(hashes);
+        Scanner pass = new Scanner(passwords);
+        
+        String currPass;
+        String currHash;
+        while(hash.hasNext()){
+            currHash = hash.next();
+            while(pass.hasNext()){
+               currPass = pass.next();
+               currPass = currPass.substring(currPass.lastIndexOf(":", currPass.length()-1));
+                System.out.println(currPass);
+               if(currPass == currHash){
+                   System.out.println("Match" + currPass);
+                   break;
+               }
+               
+            }
+        }
+        
+    }
+}
